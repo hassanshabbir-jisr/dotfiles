@@ -1,0 +1,5 @@
+# nvim plugin lock file — let lazy.nvim manage this
+nvim/lazy-lock.json
+
+# macOS
+.DS_Store
