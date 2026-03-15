@@ -11,6 +11,9 @@ export PATH="/Users/hassanbaig/.antigravity/antigravity/bin:$PATH"
 # Zsh completion system (required for fzf-tab)
 autoload -U compinit && compinit
 
+# zsh-autosuggestions: grey ghost text as you type, accept with → or End
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
 # fzf-tab: replace Tab completion UI with fzf (must load after compinit)
 source ~/.config/fzf-tab/fzf-tab.plugin.zsh
 

@@ -16,6 +16,7 @@ brew "neovim"
 brew "node"
 brew "ripgrep"
 brew "starship"
+brew "zsh-autosuggestions"
 
 # Casks
 cask "gcloud-cli"
