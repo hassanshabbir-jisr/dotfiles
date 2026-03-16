@@ -1,0 +1,18 @@
+[user]
+    name = Hassan Shabbir Ahmed Baig
+    email = hassan.shabbir@jisr.net
+
+[core]
+    editor = nvim
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = false
+
+[alias]
+    st = status
+    co = checkout
+    br = branch
+    lg = log --oneline --graph --decorate --all

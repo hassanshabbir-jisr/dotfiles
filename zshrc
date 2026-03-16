@@ -66,3 +66,10 @@ if command -v fd &>/dev/null; then
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 fi
+
+# zoxide: smarter cd with frecency tracking
+eval "$(zoxide init zsh)"
+alias cd='z'
+
+# zsh-syntax-highlighting: must be sourced last
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

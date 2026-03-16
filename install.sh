@@ -105,6 +105,7 @@ step "Creating symlinks"
 symlink "$DOTFILES_DIR/zshrc"         "$HOME/.zshrc"
 symlink "$DOTFILES_DIR/starship.toml" "$HOME/.config/starship.toml"
 symlink "$DOTFILES_DIR/nvim"          "$HOME/.config/nvim"
+symlink "$DOTFILES_DIR/gitconfig"     "$HOME/.gitconfig"
 
 # ── 6. Default shell ──────────────────────────────────────────────────
 step "Checking default shell"

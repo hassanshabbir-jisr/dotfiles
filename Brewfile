@@ -17,6 +17,8 @@ brew "node"
 brew "ripgrep"
 brew "starship"
 brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+brew "zoxide"
 
 # Casks
 cask "gcloud-cli"
