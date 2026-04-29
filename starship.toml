@@ -13,11 +13,13 @@ $git_state\
 $git_status\
 $cmd_duration\
 $status\
+$kubernetes\
+$aws\
+$gcloud\
 $line_break\
 $character"""
 
-# Cloud/k8s metadata on the right — only shown when active
-right_format = """$kubernetes$aws$gcloud"""
+# Cloud/k8s metadata appears on the first prompt line when active.
 
 [character]
 success_symbol = "[❯](bold green)"
