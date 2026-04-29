@@ -52,18 +52,18 @@ format = '[\($state( $progress_current/$progress_total)\)](bold yellow) '
 
 [git_status]
 style = "bold red"
-conflicted = "󰩌 ${count} "
-modified = "󰏫 ${count} "
-staged = " ${count} "
-untracked = " ${count} "
-stashed = "󰆓 ${count} "
-renamed = "󰑕 ${count} "
-deleted = "󰍵 ${count} "
-typechanged = "󰏬 ${count} "
+conflicted = "󰩌${count} "
+modified = "󰏫${count} "
+staged = "${count} "
+untracked = "${count} "
+stashed = "󰆓${count} "
+renamed = "󰑕${count} "
+deleted = "󰍵${count} "
+typechanged = "󰏬${count} "
 ahead = "⇡${count}"
 behind = "⇣${count}"
 diverged = "⇕⇡${ahead_count}⇣${behind_count}"
-format = '([\[$all_status$ahead_behind\]]($style) )'
+format = '([$all_status$ahead_behind]($style) )'
 
 [cmd_duration]
 min_time = 2_000
