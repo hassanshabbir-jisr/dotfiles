@@ -95,9 +95,13 @@ disabled = false
 symbol = "⎈ "
 format = '[$symbol$context( \($namespace\))](bold cyan) '
 # Show a short alias for long context names
-[kubernetes.context_aliases]
-"gke_.*_(?P<cluster>[\\w-]+)" = "gke:$cluster"
-"arn:aws:eks:[\\w-]+:\\d+:cluster/(?P<cluster>[\\w-]+)" = "eks:$cluster"
+[[kubernetes.contexts]]
+context_pattern = "gke_.*_(?P<cluster>[\\w-]+)"
+context_alias = "gke:$cluster"
+
+[[kubernetes.contexts]]
+context_pattern = "arn:aws:eks:[\\w-]+:\\d+:cluster/(?P<cluster>[\\w-]+)"
+context_alias = "eks:$cluster"
 
 # ── AWS ─────────────────────────────────────────────────────────────
 [aws]
