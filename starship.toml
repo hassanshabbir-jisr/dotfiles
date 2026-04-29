@@ -13,13 +13,17 @@ $git_state\
 $git_status\
 $cmd_duration\
 $status\
+$fill\
 $kubernetes\
 $aws\
 $gcloud\
 $line_break\
 $character"""
 
-# Cloud/k8s metadata appears on the first prompt line when active.
+# Cloud/k8s metadata appears right-justified on the first prompt line when active.
+
+[fill]
+symbol = " "
 
 [character]
 success_symbol = "[❯](bold green)"
