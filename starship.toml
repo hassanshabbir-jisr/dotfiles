@@ -51,7 +51,7 @@ tag_symbol = " @"
 format = '[\($state( $progress_current/$progress_total)\)](bold yellow) '
 
 [git_status]
-style = "bold red"
+style = "bold yellow"
 conflicted = "󰩌${count} "
 modified = "󰏫${count} "
 staged = "${count} "
