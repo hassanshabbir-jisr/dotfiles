@@ -84,9 +84,39 @@ fi
 success "Homebrew $(brew --version | head -1)"
 
 # ── 3. Brew packages ──────────────────────────────────────────────────
+# Homebrew refuses to load formulae from third-party taps until they are
+# trusted, which would make `brew bundle` fail on opencode. Trust it first.
+step "Trusting third-party taps"
+brew tap anomalyco/tap
+brew trust anomalyco/tap
+success "anomalyco/tap trusted"
+
 step "Installing packages from Brewfile"
 brew bundle install --file="$DOTFILES_DIR/Brewfile"
 success "Brewfile packages installed"
+
+# ── 3b. AI CLIs not available via Homebrew ────────────────────────────
+# codex, gemini-cli, ollama and opencode come from the Brewfile. These two
+# ship their own self-updating installers instead.
+step "Installing AI CLIs (non-Homebrew)"
+
+if command -v claude &>/dev/null; then
+  success "claude already installed ($(claude --version 2>/dev/null | head -1))"
+else
+  info "Installing Claude Code"
+  curl -fsSL https://claude.ai/install.sh | bash
+  success "claude installed"
+fi
+
+if command -v agy &>/dev/null; then
+  info "Updating Antigravity CLI"
+  agy update || warning "agy update failed, continuing"
+  success "agy up to date ($(agy --version 2>/dev/null | head -1))"
+else
+  info "Installing Antigravity CLI"
+  curl -fsSL https://antigravity.google/cli/install.sh | bash
+  success "agy installed"
+fi
 
 # ── 4. fzf-tab ────────────────────────────────────────────────────────
 step "Checking fzf-tab"
@@ -102,12 +132,12 @@ fi
 
 # ── 5. Symlinks ───────────────────────────────────────────────────────
 step "Creating symlinks"
-symlink "$DOTFILES_DIR/zprofile"      "$HOME/.zprofile"
-symlink "$DOTFILES_DIR/zshrc"         "$HOME/.zshrc"
-symlink "$DOTFILES_DIR/starship.toml" "$HOME/.config/starship.toml"
-symlink "$DOTFILES_DIR/nvim"          "$HOME/.config/nvim"
-symlink "$DOTFILES_DIR/gitconfig"     "$HOME/.gitconfig"
-symlink "$DOTFILES_DIR/zsh_completions" "$HOME/.zsh_completions"
+symlink "$DOTFILES_DIR/zprofile"         "$HOME/.zprofile"
+symlink "$DOTFILES_DIR/zshrc"            "$HOME/.zshrc"
+symlink "$DOTFILES_DIR/starship.toml"    "$HOME/.config/starship.toml"
+symlink "$DOTFILES_DIR/nvim"             "$HOME/.config/nvim"
+symlink "$DOTFILES_DIR/gitconfig"        "$HOME/.gitconfig"
+symlink "$DOTFILES_DIR/zsh_completions"  "$HOME/.zsh_completions"
 
 # ── 5b. Machine-local git config ──────────────────────────────────────
 # dotfiles/gitconfig ends with `[include] path = ~/.gitconfig.local`, so

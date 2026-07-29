@@ -16,6 +16,13 @@ step "Syncing Homebrew packages"
 brew bundle install --file="$DOTFILES_DIR/Brewfile"
 success "Brewfile packages up to date"
 
+# ── 2b. Update self-updating AI CLIs ──────────────────────────────────
+step "Updating AI CLIs (non-Homebrew)"
+if command -v agy &>/dev/null; then
+  agy update || info "agy update failed, skipping"
+fi
+success "AI CLIs up to date"
+
 # ── 3. Update fzf-tab ─────────────────────────────────────────────────
 step "Updating fzf-tab"
 if [ -d "$HOME/.config/fzf-tab" ]; then
