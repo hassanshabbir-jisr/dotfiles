@@ -107,6 +107,7 @@ symlink "$DOTFILES_DIR/zshrc"         "$HOME/.zshrc"
 symlink "$DOTFILES_DIR/starship.toml" "$HOME/.config/starship.toml"
 symlink "$DOTFILES_DIR/nvim"          "$HOME/.config/nvim"
 symlink "$DOTFILES_DIR/gitconfig"     "$HOME/.gitconfig"
+symlink "$DOTFILES_DIR/zsh_completions" "$HOME/.zsh_completions"
 
 # ── 5b. Machine-local git config ──────────────────────────────────────
 # dotfiles/gitconfig ends with `[include] path = ~/.gitconfig.local`, so

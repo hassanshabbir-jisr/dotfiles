@@ -16,6 +16,7 @@ $status\
 $fill\
 $kubernetes\
 $aws\
+${custom.github_profile}\
 $gcloud\
 $line_break\
 $character"""
@@ -120,6 +121,14 @@ format = '[$symbol($profile )(\($region\) )](bold yellow)'
 "us-west-2"      = "us-w2"
 "eu-west-1"      = "eu-w1"
 "ap-southeast-1" = "ap-se1"
+
+# ── GitHub ──────────────────────────────────────────────────────────
+[custom.github_profile]
+command = 'printf "%s" "$GITHUB_PROFILE"'
+when = 'test -n "$GITHUB_PROFILE"'
+symbol = " gh:"
+format = '[$symbol$output]($style) '
+style = "bold #90ee90"
 
 # ── Google Cloud ─────────────────────────────────────────────────────
 [gcloud]

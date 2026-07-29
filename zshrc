@@ -1,28 +1,34 @@
+# ~/.zshrc — interactive shell configuration (managed by dotfiles)
+#
+# Homebrew's environment (PATH, HOMEBREW_PREFIX) is set in ~/.zprofile.
+# HOMEBREW_PREFIX is used throughout so this file works on both Apple
+# Silicon (/opt/homebrew) and Intel (/usr/local).
+BREW_PREFIX="${HOMEBREW_PREFIX:-/opt/homebrew}"
 
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/hassanbaig/.lmstudio/bin"
-# End of LM Studio CLI section
+# ── PATH ──────────────────────────────────────────────────────────────
+export PATH="$HOME/.local/bin:$PATH"                    # claude, agy, uv tools
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"  # Antigravity
+export PATH="$PATH:$HOME/.lmstudio/bin"                 # LM Studio CLI (lms)
 
-export PATH="$HOME/.local/bin:$PATH"
-
-# Added by Antigravity
-export PATH="/Users/hassanbaig/.antigravity/antigravity/bin:$PATH"
-
-# Zsh completion system (required for fzf-tab)
+# ── Completion system (required for fzf-tab) ──────────────────────────
+# Homebrew's site-functions must be on fpath *before* compinit, otherwise
+# completions shipped by formulae (kubectx, kubens, codex, ...) never load.
+# ~/.zsh_completions holds hand-maintained completions (see dotfiles/zsh_completions).
+fpath=("$BREW_PREFIX/share/zsh/site-functions" "$HOME/.zsh_completions" $fpath)
 autoload -U compinit && compinit
 
 # zsh-autosuggestions: grey ghost text as you type, accept with → or End
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 
 # fzf-tab: replace Tab completion UI with fzf (must load after compinit)
-source ~/.config/fzf-tab/fzf-tab.plugin.zsh
+source "$HOME/.config/fzf-tab/fzf-tab.plugin.zsh"
 
-# Google Cloud SDK
-export PATH="/opt/homebrew/share/google-cloud-sdk/bin:$PATH"
-source /opt/homebrew/share/google-cloud-sdk/completion.zsh.inc
+# ── Google Cloud SDK ──────────────────────────────────────────────────
+export PATH="$BREW_PREFIX/share/google-cloud-sdk/bin:$PATH"
+source "$BREW_PREFIX/share/google-cloud-sdk/completion.zsh.inc"
 
-# AWS CLI completion
-complete -C '/opt/homebrew/bin/aws_completer' aws
+# ── AWS ───────────────────────────────────────────────────────────────
+complete -C "$BREW_PREFIX/bin/aws_completer" aws
 
 # awsp: fuzzy-switch AWS profile
 awsp() {
@@ -31,41 +37,95 @@ awsp() {
   [[ -n "$profile" ]] && export AWS_PROFILE="$profile" && echo "Switched to: $profile"
 }
 
-# kubectl completion
+# ── GitHub ────────────────────────────────────────────────────────────
+# GITHUB_PROFILE is read by starship's custom.github_profile module so the
+# active gh account shows in the prompt.
+_gh_active_profile() {
+  command -v gh >/dev/null 2>&1 || return
+  gh auth status --active --hostname github.com 2>&1 |
+    awk '/Logged in to .* account / {
+      account = $0
+      sub(/^.* account /, "", account)
+      sub(/ .*/, "", account)
+      print account
+      exit
+    }'
+}
+
+export GITHUB_PROFILE="$(_gh_active_profile)"
+
+# ghp: fuzzy-switch GitHub profile
+ghp() {
+  local profile
+
+  if [[ -n "$1" ]]; then
+    profile="$1"
+  else
+    profile=$(
+      gh auth status 2>&1 |
+        awk '
+          /Logged in to .* account / {
+            if (account != "") print account active
+            account = $0
+            sub(/^.* account /, "", account)
+            sub(/ .*/, "", account)
+            active = ""
+          }
+          /Active account: true/ { active = " (active)" }
+          END { if (account != "") print account active }
+        ' |
+        fzf --height 40% --prompt "GitHub Profile: "
+    )
+    profile="${profile%% *}"
+  fi
+
+  [[ -z "$profile" ]] && return
+
+  gh auth switch --hostname github.com --user "$profile" &&
+    gh auth setup-git --hostname github.com >/dev/null &&
+    export GITHUB_PROFILE="$profile" &&
+    echo "Switched to: $profile"
+}
+
+# ── Kubernetes ────────────────────────────────────────────────────────
 source <(kubectl completion zsh)
-# kubectx/kubens completions are auto-loaded via brew's zsh/site-functions
-
-# helm completion
 source <(helm completion zsh)
-
-# kubectx / kubens aliases
+# kubectx/kubens completions load from Homebrew's site-functions (see fpath above)
 alias kctx='kubectx'   # switch context (runs fzf picker if no arg given)
 alias kns='kubens'     # switch namespace (runs fzf picker if no arg given)
 alias kc='kubectl'
 
-# Neovim as default editor
+# ── Editor ────────────────────────────────────────────────────────────
 export EDITOR=nvim
 export VISUAL=nvim
 alias vim='nvim'
 alias vi='nvim'
 
-# bat (modern cat replacement)
+# ── Modern CLI replacements ───────────────────────────────────────────
+# bat (modern cat)
 alias cat='bat --paging=never'
 export BAT_THEME="Catppuccin Mocha"
 
-# eza (modern ls replacement)
+# eza (modern ls)
 alias ls='eza --icons'
 alias ll='eza --icons -l --git --sort=modified --reverse'
 alias la='eza --icons -la --git --sort=modified --reverse'
 alias lt='eza --icons --tree --level=2'
 
-# Starship prompt
+# ── AI CLI aliases ────────────────────────────────────────────────────
+alias oc='opencode'
+alias ol='ollama'
+alias cx='codex'
+alias gm='gemini'
+alias ag='agy'
+compdef _ollama ol
+
+# ── Starship prompt ───────────────────────────────────────────────────
 eval "$(starship init zsh)"
 
-# fzf shell integration (Ctrl+R history, Ctrl+T file search, Alt+C cd)
+# ── fzf ───────────────────────────────────────────────────────────────
+# shell integration (Ctrl+R history, Ctrl+T file search, Alt+C cd)
 source <(fzf --zsh)
-
-# fzf options: show 20 lines, preview files, use fd if available
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --info=inline"
 
 # Use fd for fzf file listing if available (faster, respects .gitignore)
@@ -75,11 +135,7 @@ if command -v fd &>/dev/null; then
   export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 fi
 
-# zoxide: smarter cd with frecency tracking
-eval "$(zoxide init zsh)"
-alias cd='z'
-
-# gitfindclone: search GitHub, pick with fzf, clone to ~/git-repos or $PWD
+# ── gitfindclone: search GitHub, pick with fzf, clone to ~/git-repos or $PWD ──
 gitfindclone() {
   if [[ -z "$1" ]]; then
     echo "Usage: gitfindclone <search query>"
@@ -101,53 +157,20 @@ gitfindclone() {
   gh repo clone "$repo" "$clone_dir/${repo#*/}"
 }
 
-# prompt-engineer (alias: pe): transform raw instructions into a polished LLM prompt
-# Uses the first available CLI: gemini → codex → claude
-# Copies result to clipboard (macOS) and displays with bat or plain echo
-prompt-engineer() {
-  local raw_input="$*"
-  if [[ -z "$raw_input" ]]; then
-    echo "Usage: prompt-engineer <raw instructions>"
-    return 1
-  fi
+# ── mole (macOS cleanup) completion ───────────────────────────────────
+if output="$(mole completion zsh 2>/dev/null)"; then eval "$output"; fi
 
-  local meta_prompt="You are an expert prompt engineer. Transform the following raw instructions into a high-quality, structured, and effective prompt for a large language model. Focus on clarity, context, and specific constraints to ensure the best possible output. Return ONLY the final prompt, nothing else. Raw instructions: "
-  local result=""
+# ── Rust (only present if a toolchain is installed) ───────────────────
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
-  if command -v gemini &>/dev/null; then
-    echo "Engineering your prompt using gemini..." >&2
-    result=$(gemini -p "${meta_prompt}${raw_input}" -o text 2>/dev/null)
-  elif command -v codex &>/dev/null; then
-    echo "Engineering your prompt using codex..." >&2
-    result=$(codex exec "${meta_prompt}${raw_input}" 2>/dev/null)
-  elif command -v claude &>/dev/null; then
-    echo "Engineering your prompt using claude..." >&2
-    result=$(claude --print "${meta_prompt}${raw_input}" 2>/dev/null)
-  else
-    echo "Error: No supported LLM CLI (gemini, codex, or claude) found in PATH." >&2
-    return 1
-  fi
+# ── zoxide: smarter cd with frecency tracking ─────────────────────────
+# zoxide asks to be initialised last, but zsh-syntax-highlighting genuinely
+# must be sourced last to work. zoxide's doctor flags that as a problem and
+# prints a warning on every shell start; it is a false positive here, so the
+# check is disabled rather than reordering and breaking highlighting.
+export _ZO_DOCTOR=0
+eval "$(zoxide init zsh)"
+alias cd='z'
 
-  if [[ -z "$result" ]]; then
-    echo "Error: Failed to generate a prompt." >&2
-    return 1
-  fi
-
-  command -v pbcopy &>/dev/null && echo -n "$result" | pbcopy && echo "✓ Prompt copied to clipboard." >&2
-
-  echo "" >&2
-  if command -v bat &>/dev/null; then
-    echo "$result" | bat --language=markdown --style=grid --paging=never
-  else
-    echo "-------------------------------------------"
-    echo "$result"
-    echo "-------------------------------------------"
-  fi
-}
-
-alias pe='prompt-engineer'
-
-# zsh-syntax-highlighting: must be sourced last
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
-. "$HOME/.cargo/env"
+# ── zsh-syntax-highlighting: must be sourced last ─────────────────────
+source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
