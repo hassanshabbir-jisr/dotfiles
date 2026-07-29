@@ -108,6 +108,20 @@ symlink "$DOTFILES_DIR/starship.toml" "$HOME/.config/starship.toml"
 symlink "$DOTFILES_DIR/nvim"          "$HOME/.config/nvim"
 symlink "$DOTFILES_DIR/gitconfig"     "$HOME/.gitconfig"
 
+# ── 5b. Machine-local git config ──────────────────────────────────────
+# dotfiles/gitconfig ends with `[include] path = ~/.gitconfig.local`, so
+# per-machine settings live outside the repo. Seed it empty if absent.
+step "Checking machine-local git config"
+if [ ! -e "$HOME/.gitconfig.local" ]; then
+  cat > "$HOME/.gitconfig.local" <<'EOF'
+# Machine-local git config — NOT tracked by dotfiles.
+# Put per-machine identities or credential overrides here.
+EOF
+  success "Created $HOME/.gitconfig.local"
+else
+  success "$HOME/.gitconfig.local already exists"
+fi
+
 # ── 6. Default shell ──────────────────────────────────────────────────
 step "Checking default shell"
 if [ "$SHELL" != "/bin/zsh" ]; then

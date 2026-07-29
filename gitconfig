@@ -16,3 +16,21 @@
     co = checkout
     br = branch
     lg = log --oneline --graph --decorate --all
+
+# Let the GitHub CLI broker credentials for github.com. Resolved via PATH
+# rather than an absolute path so this works on Apple Silicon and Intel.
+# `gh auth setup-git` writes these same entries; keeping them tracked means
+# a fresh machine has working auth as soon as `gh auth login` succeeds.
+[credential "https://github.com"]
+    helper =
+    helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+    helper =
+    helper = !gh auth git-credential
+
+# Machine-local overrides — per-machine identities, work-specific settings,
+# anything that must not be committed. Created empty by install.sh.
+# Entries there win over the ones above, since later includes take precedence.
+[include]
+    path = ~/.gitconfig.local
