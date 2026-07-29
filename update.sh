@@ -13,7 +13,7 @@ git -C "$DOTFILES_DIR" pull --ff-only
 
 # ── 2. Sync new Homebrew packages ─────────────────────────────────────
 step "Syncing Homebrew packages"
-brew bundle --file="$DOTFILES_DIR/Brewfile" --no-lock
+brew bundle install --file="$DOTFILES_DIR/Brewfile"
 success "Brewfile packages up to date"
 
 # ── 3. Update fzf-tab ─────────────────────────────────────────────────

@@ -85,7 +85,7 @@ success "Homebrew $(brew --version | head -1)"
 
 # ── 3. Brew packages ──────────────────────────────────────────────────
 step "Installing packages from Brewfile"
-brew bundle --file="$DOTFILES_DIR/Brewfile" --no-lock
+brew bundle install --file="$DOTFILES_DIR/Brewfile"
 success "Brewfile packages installed"
 
 # ── 4. fzf-tab ────────────────────────────────────────────────────────
