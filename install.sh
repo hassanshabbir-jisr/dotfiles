@@ -102,6 +102,7 @@ fi
 
 # ── 5. Symlinks ───────────────────────────────────────────────────────
 step "Creating symlinks"
+symlink "$DOTFILES_DIR/zprofile"      "$HOME/.zprofile"
 symlink "$DOTFILES_DIR/zshrc"         "$HOME/.zshrc"
 symlink "$DOTFILES_DIR/starship.toml" "$HOME/.config/starship.toml"
 symlink "$DOTFILES_DIR/nvim"          "$HOME/.config/nvim"
