@@ -1,5 +1,17 @@
-# nvim plugin lock file — let lazy.nvim manage this
-nvim/lazy-lock.json
+# nvim plugin lock file is tracked deliberately: pinning plugin revisions is
+# what makes a rebuild on a new machine reproducible. Run `:Lazy update`
+# inside nvim to bump it, then commit the change.
+
+# Never commit credentials. ~/.npmrc in particular holds registry auth
+# tokens; it is intentionally not managed by this repo.
+.npmrc
+*.pem
+*_rsa
+*_ed25519
+.gitconfig.local
+
+# Machine-local Claude Code settings
+.claude/settings.local.json
 
 # macOS
 .DS_Store
